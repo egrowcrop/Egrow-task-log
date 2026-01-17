@@ -278,6 +278,58 @@
         }
 
         /* VIEW 2: STATISTICS */
+        .stats-summary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            padding: 25px 30px;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px var(--shadow);
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .stats-summary-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stats-compact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+        }
+
+        .stat-compact {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .stat-compact:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-3px);
+        }
+
+        .stat-compact-value {
+            font-size: 2em;
+            font-weight: 700;
+            font-family: 'Space Mono', monospace;
+            margin-bottom: 5px;
+        }
+
+        .stat-compact-label {
+            font-size: 0.85em;
+            opacity: 0.95;
+            font-weight: 500;
+        }
+
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -655,11 +707,12 @@
 
         .record-card {
             background: var(--card-bg);
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 4px 15px var(--shadow);
-            border-left: 5px solid var(--primary-light);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px var(--shadow);
+            border-left: 4px solid var(--primary-light);
             transition: all 0.3s ease;
+            margin-bottom: 15px;
         }
 
         .record-card.incomplete {
@@ -675,26 +728,26 @@
         .auto-badge {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.8em;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.75em;
             font-weight: 600;
             display: inline-block;
-            margin-bottom: 15px;
-            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+            margin-bottom: 10px;
+            box-shadow: 0 2px 6px rgba(102, 126, 234, 0.3);
         }
 
         .record-card:hover {
-            box-shadow: 0 6px 25px var(--shadow);
-            transform: translateX(5px);
+            box-shadow: 0 4px 15px var(--shadow);
+            transform: translateX(3px);
         }
 
         .record-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 20px;
-            gap: 20px;
+            margin-bottom: 15px;
+            gap: 15px;
         }
 
         .record-date-info {
@@ -702,22 +755,22 @@
         }
 
         .record-date {
-            font-size: 1.3em;
+            font-size: 1.1em;
             font-weight: 700;
             color: var(--primary);
-            margin-bottom: 5px;
+            margin-bottom: 3px;
         }
 
         .record-task-type {
-            font-size: 1.1em;
+            font-size: 0.95em;
             font-weight: 600;
             color: var(--text);
         }
 
         .record-status {
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-size: 0.85em;
+            padding: 6px 15px;
+            border-radius: 15px;
+            font-size: 0.8em;
             font-weight: 600;
             white-space: nowrap;
         }
@@ -744,28 +797,29 @@
 
         .record-details {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin-bottom: 15px;
         }
 
         .record-detail {
-            font-size: 0.95em;
+            font-size: 0.9em;
         }
 
         .record-detail-label {
             color: var(--text-light);
-            font-size: 0.85em;
+            font-size: 0.8em;
             font-weight: 500;
-            margin-bottom: 5px;
+            margin-bottom: 3px;
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 4px;
         }
 
         .record-detail-value {
             font-weight: 600;
             color: var(--text);
+            font-size: 0.95em;
         }
 
         .record-detail-value.missing {
@@ -775,19 +829,21 @@
 
         .record-notes {
             background: var(--bg);
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 15px;
-            line-height: 1.6;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            line-height: 1.5;
+            font-size: 0.9em;
         }
 
         .record-notes-title {
             font-weight: 600;
             color: var(--primary);
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
+            font-size: 0.95em;
         }
 
         .record-images {
@@ -1222,6 +1278,27 @@
                 min-height: 52px;
             }
 
+            .stats-summary {
+                padding: 20px 15px;
+            }
+
+            .stats-compact-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+
+            .stat-compact {
+                padding: 12px 10px;
+            }
+
+            .stat-compact-value {
+                font-size: 1.8em;
+            }
+
+            .stat-compact-label {
+                font-size: 0.75em;
+            }
+
             .stats-grid {
                 grid-template-columns: 1fr 1fr;
                 gap: 12px;
@@ -1450,6 +1527,23 @@
                 padding: 10px 6px;
             }
 
+            .stats-compact-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+            }
+
+            .stat-compact {
+                padding: 10px 8px;
+            }
+
+            .stat-compact-value {
+                font-size: 1.5em;
+            }
+
+            .stat-compact-label {
+                font-size: 0.7em;
+            }
+
             .stats-grid {
                 grid-template-columns: 1fr;
             }
@@ -1608,36 +1702,34 @@
         <div id="statsView" class="view">
             <h2 class="view-title">📊 Task Statistics Dashboard</h2>
             
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon">📝</div>
-                    <div class="stat-label">Total Tasks</div>
-                    <div class="stat-value" id="totalTasks">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">✅</div>
-                    <div class="stat-label">Completed</div>
-                    <div class="stat-value" id="completedTasks">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">🔄</div>
-                    <div class="stat-label">In Progress</div>
-                    <div class="stat-value" id="progressTasks">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">⏳</div>
-                    <div class="stat-label">Pending</div>
-                    <div class="stat-value" id="pendingTasks">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">📅</div>
-                    <div class="stat-label">Today's Tasks</div>
-                    <div class="stat-value" id="todayTasks">0</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">📸</div>
-                    <div class="stat-label">Photos Uploaded</div>
-                    <div class="stat-value" id="totalPhotos">0</div>
+            <!-- Compact Summary Box -->
+            <div class="stats-summary">
+                <div class="stats-summary-title">📋 Quick Overview</div>
+                <div class="stats-compact-grid">
+                    <div class="stat-compact">
+                        <div class="stat-compact-value" id="totalTasks">0</div>
+                        <div class="stat-compact-label">Total Tasks</div>
+                    </div>
+                    <div class="stat-compact">
+                        <div class="stat-compact-value" id="completedTasks">0</div>
+                        <div class="stat-compact-label">Completed</div>
+                    </div>
+                    <div class="stat-compact">
+                        <div class="stat-compact-value" id="progressTasks">0</div>
+                        <div class="stat-compact-label">In Progress</div>
+                    </div>
+                    <div class="stat-compact">
+                        <div class="stat-compact-value" id="pendingTasks">0</div>
+                        <div class="stat-compact-label">Pending</div>
+                    </div>
+                    <div class="stat-compact">
+                        <div class="stat-compact-value" id="todayTasks">0</div>
+                        <div class="stat-compact-label">Today</div>
+                    </div>
+                    <div class="stat-compact">
+                        <div class="stat-compact-value" id="totalPhotos">0</div>
+                        <div class="stat-compact-label">Photos</div>
+                    </div>
                 </div>
             </div>
 
