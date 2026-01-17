@@ -654,6 +654,23 @@
             background: linear-gradient(to right, #fff9f0 0%, white 50%);
         }
 
+        .record-card.auto-created {
+            border-left-color: #667eea;
+            background: linear-gradient(to right, #f0f0ff 0%, white 50%);
+        }
+
+        .auto-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+
         .record-card:hover {
             box-shadow: 0 6px 25px var(--shadow);
             transform: translateX(5px);
@@ -1235,6 +1252,18 @@
                         </select>
                     </div>
 
+                    <div class="form-group" id="cropTypeGroup" style="display: none;">
+                        <label for="cropType">🍍 Crop Type (for INDUCE)</label>
+                        <select id="cropType">
+                            <option value="">Select crop type...</option>
+                            <option value="SG1">SG1 (Harvest in 125 days)</option>
+                            <option value="MD2">MD2 (Harvest in 145 days)</option>
+                        </select>
+                        <div class="info-note" style="margin-top: 10px; font-size: 0.9em;">
+                            💡 <strong>Auto-Schedule:</strong> A HARVEST task will be automatically created for the calculated harvest date!
+                        </div>
+                    </div>
+
                     <div class="form-row">
                         <div class="form-group">
                             <label for="timeStart">⏰ Time Start</label>
@@ -1548,6 +1577,21 @@
             }
         }
 
+        // Task type change - show/hide crop type field
+        document.getElementById('taskType').addEventListener('change', function() {
+            const cropTypeGroup = document.getElementById('cropTypeGroup');
+            const cropType = document.getElementById('cropType');
+            
+            if (this.value === 'INDUCE') {
+                cropTypeGroup.style.display = 'block';
+                cropType.required = true;
+            } else {
+                cropTypeGroup.style.display = 'none';
+                cropType.required = false;
+                cropType.value = '';
+            }
+        });
+
         // File upload for before photos in entry form
         document.getElementById('beforePhotosEntry').addEventListener('change', function(e) {
             const files = e.target.files;
@@ -1634,12 +1678,15 @@
 
             const timeEnd = document.getElementById('timeEnd').value;
             const timeStart = document.getElementById('timeStart').value;
+            const taskType = document.getElementById('taskType').value;
+            const cropType = document.getElementById('cropType').value;
 
             const task = {
                 id: Date.now(),
                 date: document.getElementById('date').value,
                 day: document.getElementById('day').value,
-                taskType: document.getElementById('taskType').value,
+                taskType: taskType,
+                cropType: cropType || null,
                 timeStart: timeStart,
                 timeEnd: timeEnd || null,
                 operator: document.getElementById('operator').value,
@@ -1652,12 +1699,19 @@
             };
 
             tasks.push(task);
+
+            // Auto-create HARVEST task if this is INDUCE
+            if (taskType === 'INDUCE' && cropType) {
+                createAutoHarvestTask(task, cropType);
+            }
+
             localStorage.setItem('agroTasks', JSON.stringify(tasks));
 
-            showToast('✅ Task saved successfully!');
+            showToast('✅ Task saved successfully!' + (taskType === 'INDUCE' && cropType ? ' Harvest task auto-scheduled!' : ''));
             this.reset();
             document.getElementById('beforePhotosEntryPreview').innerHTML = '';
             beforePhotosEntryData = [];
+            document.getElementById('cropTypeGroup').style.display = 'none';
             document.getElementById('date').valueAsDate = new Date();
             updateDayField();
             
@@ -1665,6 +1719,42 @@
             renderRecords();
             renderCharts();
         });
+
+        // Function to create auto-scheduled harvest task
+        function createAutoHarvestTask(induceTask, cropType) {
+            // Calculate harvest date
+            const induceDate = new Date(induceTask.date);
+            const daysToAdd = cropType === 'SG1' ? 125 : 145;
+            
+            const harvestDate = new Date(induceDate);
+            harvestDate.setDate(harvestDate.getDate() + daysToAdd);
+            
+            const harvestDateStr = harvestDate.toISOString().split('T')[0];
+            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const harvestDay = days[harvestDate.getDay()];
+
+            // Create harvest task
+            const harvestTask = {
+                id: Date.now() + 1, // Unique ID
+                date: harvestDateStr,
+                day: harvestDay,
+                taskType: 'HARVEST',
+                cropType: cropType,
+                timeStart: induceTask.timeStart,
+                timeEnd: null,
+                operator: induceTask.operator,
+                workNotes: `Auto-scheduled HARVEST for ${cropType} (${daysToAdd} days after INDUCE on ${induceTask.date})`,
+                weather: '',
+                status: 'Pending',
+                beforePhotos: [],
+                afterPhotos: [],
+                duration: null,
+                autoCreated: true,
+                linkedInduceTaskId: induceTask.id
+            };
+
+            tasks.push(harvestTask);
+        }
 
         function calculateDuration(start, end) {
             if (!start || !end) return null;
@@ -2131,11 +2221,12 @@
                 const isIncomplete = !task.timeEnd || (!hasBeforePhotos && !hasAfterPhotos);
                 
                 return `
-                <div class="record-card ${isIncomplete ? 'incomplete' : ''}">
+                <div class="record-card ${isIncomplete ? 'incomplete' : ''} ${task.autoCreated ? 'auto-created' : ''}">
+                    ${task.autoCreated ? '<div class="auto-badge">🤖 Auto-Scheduled</div>' : ''}
                     <div class="record-header">
                         <div class="record-date-info">
                             <div class="record-date">${formatDate(task.date)} • ${task.day}</div>
-                            <div class="record-task-type">${task.taskType}</div>
+                            <div class="record-task-type">${task.taskType}${task.cropType ? ` (${task.cropType})` : ''}</div>
                         </div>
                         <div class="record-status status-${task.status.toLowerCase().replace(' ', '-')}">${task.status}</div>
                     </div>
@@ -2241,6 +2332,8 @@
                 'Date': task.date,
                 'Day': task.day,
                 'Task Type': task.taskType,
+                'Crop Type': task.cropType || '-',
+                'Auto-Scheduled': task.autoCreated ? 'Yes' : 'No',
                 'Time Start': task.timeStart,
                 'Time End': task.timeEnd || 'Not set',
                 'Duration': task.duration || 'Pending',
@@ -2256,8 +2349,9 @@
             const ws = XLSX.utils.json_to_sheet(exportData);
             
             ws['!cols'] = [
-                {wch: 12}, {wch: 10}, {wch: 18}, {wch: 10}, {wch: 10}, 
-                {wch: 12}, {wch: 15}, {wch: 40}, {wch: 18}, {wch: 12}, {wch: 15}, {wch: 15}
+                {wch: 12}, {wch: 10}, {wch: 18}, {wch: 12}, {wch: 15},
+                {wch: 10}, {wch: 10}, {wch: 12}, {wch: 15}, {wch: 40}, 
+                {wch: 18}, {wch: 12}, {wch: 15}, {wch: 15}
             ];
 
             XLSX.utils.book_append_sheet(wb, ws, "Task Log");
