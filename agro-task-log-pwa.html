@@ -2066,7 +2066,7 @@ console.log("Firestore Ready");
         });
 
         // Form submission
-        document.getElementById('taskForm').addEventListener('submit', function(e) {
+        document.getElementById('taskForm').addEventListener('submit', async function(e) {
             e.preventDefault();
 
             const timeEnd = document.getElementById('timeEnd').value;
@@ -2093,6 +2093,32 @@ console.log("Firestore Ready");
 
             tasks.push(task);
 
+          try {
+
+    await addDoc(collection(db, "tasks"), {
+        date: task.date,
+        day: task.day,
+        taskType: task.taskType,
+        cropType: task.cropType,
+        timeStart: task.timeStart,
+        timeEnd: task.timeEnd,
+        operator: task.operator,
+        workNotes: task.workNotes,
+        weather: task.weather,
+        status: task.status,
+        beforePhotos: task.beforePhotos,
+        afterPhotos: task.afterPhotos,
+        duration: task.duration,
+        createdAt: new Date()
+    });
+
+    console.log("Task saved to Firebase");
+
+} catch (error) {
+
+    console.error("Firebase Save Error:", error);
+
+}
             // Auto-create HARVEST task if this is INDUCE
             if (taskType === 'INDUCE' && cropType) {
                 createAutoHarvestTask(task, cropType);
